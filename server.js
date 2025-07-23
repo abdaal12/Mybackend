@@ -37,11 +37,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const orderRoutes = require('./routes/orderRoutes');
 app.use('/api/orders', orderRoutes);
 
-//Upload Route
 
-// server.js or app.js
-const uploadRoute = require('./routes/uploadRoute');
-app.use('/api/upload', uploadRoute);
 
 
 app.get('/',(req,res) => {
