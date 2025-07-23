@@ -16,8 +16,8 @@ const createProduct = async (req, res) => {
       countInStock,
     } = req.body;
 
-
-    const image = req.file ? req.file.path : ""; // Cloudinary gives back a public URL in .path
+    // Ensure Cloudinary URL is set correctly
+    const image = req.file?.path || ""; // .path should be secure URL
 
     const product = new Product({
       user: req.user._id,
@@ -25,7 +25,7 @@ const createProduct = async (req, res) => {
       brand,
       category,
       description,
-      image, // will now be a full Cloudinary URL
+      image, // Cloudinary URL
       price,
       countInStock,
     });
@@ -38,11 +38,6 @@ const createProduct = async (req, res) => {
   }
 };
 
-/**
- * @desc    Get all products
- * @route   GET /api/products
- * @access  Public
- */
 const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find().populate("user", "name email");

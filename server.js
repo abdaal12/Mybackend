@@ -11,7 +11,7 @@ const connectDB = require('./config/db');
 dotenv.config();
 connectDB(); 
 
-app.use(cors());
+app.use(cors({ origin: "https://m-yfrontend.vercel.app" }));
 app.use(express.json());
 
 //User Routes
