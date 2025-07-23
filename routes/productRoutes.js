@@ -15,8 +15,8 @@ const {
 
 // Middleware
 const { protect } = require('../middleware/authMiddleware');
-const { isAdmin, isVendor } = require('../middleware/roleMiddleware');
-const upload = require("../middleware/uploadMIddleware");
+const { isVendor } = require('../middleware/roleMiddleware');
+const upload = require('../middlewares/uploadMiddleware');
 
 // PUBLIC ROUTES
 router.get('/', getAllProducts);                  // Fetch all products
@@ -25,7 +25,7 @@ router.get('/:id', getProductById);              // Get product by ID
 
 
 // PROTECTED ROUTES (Require JWT)
-router.post("/", upload.single("image"), protect, isVendor,createProduct);   // Create new product
+router.post( "/",  protect,isVendor,upload.single("image"), createProduct );
 router.get('/my/products', protect, getMyProducts); // Fetch products created by logged-in user
 router.put('/:id', protect, updateProduct);      // Update product by owner only
 router.delete('/:id', protect, deleteProduct);   // Delete product by owner only
