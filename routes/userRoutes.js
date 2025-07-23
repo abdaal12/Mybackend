@@ -7,8 +7,6 @@ const {createUser,getAllUsers,loginUser,getUserProfile,updateUserProfile}=requir
 
 const { protect } = require('../middleware/authMiddleware');
 
-
-
 router.post('/',createUser);
 router.get('/',getAllUsers);
 router.post('/login', loginUser); 

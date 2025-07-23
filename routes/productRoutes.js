@@ -13,7 +13,6 @@ const {
 } = require('../controllers/productController');
 
 
-
 // Middleware
 const { protect } = require('../middleware/authMiddleware');
 const { isAdmin, isVendor } = require('../middleware/roleMiddleware');

@@ -16,17 +16,16 @@ const createProduct = async (req, res) => {
       countInStock,
     } = req.body;
 
-    // ✅ Handle uploaded image
-    const image = req.file ? `/uploads/${req.file.filename}` : "";
 
-    // ✅ Create product document
+    const image = req.file ? req.file.path : ""; // Cloudinary gives back a public URL in .path
+
     const product = new Product({
-      user: req.user._id, // Vendor/Admin ID
+      user: req.user._id,
       name,
       brand,
       category,
       description,
-      image,
+      image, // will now be a full Cloudinary URL
       price,
       countInStock,
     });
