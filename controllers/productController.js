@@ -8,7 +8,6 @@ const Product = require("../models/Product");
 const cloudinary=require("../config/cloudinary.js");
 
 
-
 const createProduct = async (req, res) => {
   try {
     const { name, brand, category, description, price, countInStock } = req.body;
@@ -17,7 +16,7 @@ const createProduct = async (req, res) => {
       return res.status(400).json({ error: "Image file is required" });
     }
 
-    // Upload image buffer to Cloudinary
+    // Upload image to Cloudinary
     const streamUpload = (buffer) => {
       return new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
@@ -30,13 +29,12 @@ const createProduct = async (req, res) => {
             }
           }
         );
-        stream.end(buffer); // Very important!
+        stream.end(buffer);
       });
     };
 
     const result = await streamUpload(req.file.buffer);
 
-    // Create and save product
     const product = new Product({
       name,
       brand,
