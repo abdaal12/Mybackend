@@ -36,13 +36,13 @@ app.use('/api/products',productRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-//Orders Routes
-
-const orderRoutes = require('./routes/orderRoutes');
-app.use('/api/orders', orderRoutes);
 
 
 
+//Chat Routes
+
+const chatRoutes = require("./routes/chatRoutes");
+app.use("/api", chatRoutes);
 
 app.get('/',(req,res) => {
     res.send("api is running............");

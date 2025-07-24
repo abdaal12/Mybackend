@@ -8,7 +8,7 @@ const {
   updateUserRole,
   verifyUser,
   getAllProductsForAdmin,
-   getAllOrdersForAdmin,
+ 
 } = require('../controllers/adminController');
 
 
@@ -23,7 +23,7 @@ router.patch('/users/:id',verifyUser)
 
 
 router.get('/products',  getAllProductsForAdmin);
-router.get('/orders',  getAllOrdersForAdmin);
+
 
 
 module.exports = router;

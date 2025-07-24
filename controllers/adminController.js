@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const Order = require('../models/Order');
+
 const Product = require('../models/Product');
 
 
@@ -99,32 +99,7 @@ const getAllProductsForAdmin = async (req, res) => {
 };
 
 
-const getAllOrdersForAdmin = async (req, res) => {
-  try {
-    const orders = await Order.find()
-      .populate('user', 'email name')
-      .populate('orderItems.product', 'name');
 
-    const formatted = orders.map(o => ({
-      _id: o._id,
-      user: {
-        email: o.user?.email || 'N/A',
-      },
-      status: o.status,
-      totalPrice: o.totalPrice,
-      createdAt: o.createdAt,
-      orderItems: o.orderItems.map(item => ({
-        _id: item._id,
-        name: item.product?.name || 'N/A',
-        quantity: item.quantity,
-      })),
-    }));
-
-    res.json(formatted);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
 
 
 module.exports = {
@@ -133,6 +108,5 @@ module.exports = {
   deleteUser,
   updateUserRole,
   verifyUser,
-  getAllOrdersForAdmin,
   getAllProductsForAdmin,
 };
