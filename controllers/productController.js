@@ -5,64 +5,57 @@ const Product = require("../models/Product");
  * @route   POST /api/products
  * @access  Private
  */
-import cloudinary from "../config/cloudinary.js";
+const cloudinary=require("../config/cloudinary.js");
 
-export const createProduct = async (req, res) => {
+
+
+const createProduct = async (req, res) => {
   try {
     const { name, brand, category, description, price, countInStock } = req.body;
 
-    // Image file from multer (memory)
-    const uploadedImage = await cloudinary.uploader.upload_stream(
-      { resource_type: "image" },
-      async (error, result) => {
-        if (error) return res.status(500).json({ error: "Cloudinary upload failed" });
-
-        const product = new Product({
-          name,
-          brand,
-          category,
-          description,
-          price,
-          countInStock,
-          image: result.secure_url, // ✅ Save URL to MongoDB
-          user: req.user._id,
-        });
-
-        const createdProduct = await product.save();
-        res.status(201).json(createdProduct);
-      }
-    );
-
-    // Pipe image buffer to Cloudinary stream
-    if (req.file) {
-      const stream = cloudinary.uploader.upload_stream(
-        { folder: "products" },
-        async (error, result) => {
-          if (error) return res.status(500).json({ error: "Cloudinary upload failed" });
-
-          const product = new Product({
-            name,
-            brand,
-            category,
-            description,
-            price,
-            countInStock,
-            image: result.secure_url,
-            user: req.user._id,
-          });
-
-          const createdProduct = await product.save();
-          res.status(201).json(createdProduct);
-        }
-      );
-      stream.end(req.file.buffer); // ⬅️ very important
-    } else {
-      return res.status(400).json({ error: "Image is required" });
+    if (!req.file) {
+      return res.status(400).json({ error: "Image file is required" });
     }
+
+    // Upload image buffer to Cloudinary
+    const streamUpload = (buffer) => {
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "products" },
+          (error, result) => {
+            if (result) {
+              resolve(result);
+            } else {
+              reject(error);
+            }
+          }
+        );
+        stream.end(buffer); // Very important!
+      });
+    };
+
+    const result = await streamUpload(req.file.buffer);
+
+    // Create and save product
+    const product = new Product({
+      name,
+      brand,
+      category,
+      description,
+      price,
+      countInStock,
+      image: result.secure_url,
+      user: req.user._id,
+    });
+
+    const createdProduct = await product.save();
+    res.status(201).json(createdProduct);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error in createProduct:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };
+
 
 
 const getAllProducts = async (req, res) => {
