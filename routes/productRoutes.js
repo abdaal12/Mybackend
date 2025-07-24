@@ -23,7 +23,7 @@ const upload = require('../middleware/upload');
 router.get('/', getAllProducts);                  // Fetch all products
 router.get('/search', searchProducts);
 router.get('/:id', getProductById);              // Get product by ID
-router.put("/like/:id", likeProduct);
+router.put("/like/:id", protect, likeProduct);
 
 // PROTECTED ROUTES (Require JWT)
 router.post( "/",  protect,isVendor,upload.single("image"), createProduct );

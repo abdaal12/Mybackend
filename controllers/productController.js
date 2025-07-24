@@ -188,18 +188,29 @@ const searchProducts = (async (req, res) => {
   res.json(products);
 });
 
+//Like Product
+
 const likeProduct = async (req, res) => {
+  const userId = req.user.id; // assuming user is authenticated and ID is available
+  const productId = req.params.id;
+
   try {
-    const product = await Product.findById(req.params.id);
-    if (!product)
-      return res.status(404).json({ message: "Product not found" });
+    const product = await Product.findById(productId);
+
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    // Check if user already liked
+    if (product.likedBy.includes(userId)) {
+      return res.status(400).json({ message: "You already liked this product." });
+    }
 
     product.likes += 1;
+    product.likedBy.push(userId);
     await product.save();
 
-    res.status(200).json({ message: "Product liked", likes: product.likes });
-  } catch (error) {
-    console.error("Error in likeProduct:", error.message);
+    res.status(200).json({ message: "Liked", likes: product.likes });
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
