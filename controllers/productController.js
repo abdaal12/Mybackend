@@ -5,7 +5,7 @@ const Product = require("../models/Product");
  * @route   POST /api/products
  * @access  Private
  */
-const cloudinary=require("../config/cloudinary.js");
+ cloudinary=require("../config/cloudinary.js");
 
 
 const createProduct = async (req, res) => {
@@ -20,7 +20,7 @@ const createProduct = async (req, res) => {
     const streamUpload = (buffer) => {
       return new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
-          { folder: "products" },
+          { folder: "Mystore" },
           (error, result) => {
             if (result) {
               resolve(result);
