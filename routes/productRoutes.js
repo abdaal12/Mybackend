@@ -16,7 +16,7 @@ const {
 // Middleware
 const { protect } = require('../middleware/authMiddleware');
 const { isVendor } = require('../middleware/roleMiddleware');
-const upload = require('../middleware/uploadMiddleware');
+const upload = require('../middleware/upload');
 
 // PUBLIC ROUTES
 router.get('/', getAllProducts);                  // Fetch all products
