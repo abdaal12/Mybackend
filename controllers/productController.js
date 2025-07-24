@@ -5,41 +5,65 @@ const Product = require("../models/Product");
  * @route   POST /api/products
  * @access  Private
  */
-const createProduct = async (req, res) => {
+import cloudinary from "../config/cloudinary.js";
+
+export const createProduct = async (req, res) => {
   try {
-    const {
-      name,
-      brand,
-      category,
-      description,
-      price,
-      countInStock,
-    } = req.body;
+    const { name, brand, category, description, price, countInStock } = req.body;
 
+    // Image file from multer (memory)
+    const uploadedImage = await cloudinary.uploader.upload_stream(
+      { resource_type: "image" },
+      async (error, result) => {
+        if (error) return res.status(500).json({ error: "Cloudinary upload failed" });
 
-const imageUrl = req.file?.path;
-if (!imageUrl) {
-  return res.status(400).json({ message: "Image upload failed" });
-}
+        const product = new Product({
+          name,
+          brand,
+          category,
+          description,
+          price,
+          countInStock,
+          image: result.secure_url, // ✅ Save URL to MongoDB
+          user: req.user._id,
+        });
 
-    const product = new Product({
-      user: req.user._id,
-      name,
-      brand,
-      category,
-      description,
-      price,
-      countInStock,
-      image: req.file.path,
-    });
+        const createdProduct = await product.save();
+        res.status(201).json(createdProduct);
+      }
+    );
 
-    const createdProduct = await product.save();
-    res.status(201).json(createdProduct);
-  } catch (err) {
-    console.error("Create Product Error:", err.message);
-    res.status(500).json({ message: "Server error" });
+    // Pipe image buffer to Cloudinary stream
+    if (req.file) {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "products" },
+        async (error, result) => {
+          if (error) return res.status(500).json({ error: "Cloudinary upload failed" });
+
+          const product = new Product({
+            name,
+            brand,
+            category,
+            description,
+            price,
+            countInStock,
+            image: result.secure_url,
+            user: req.user._id,
+          });
+
+          const createdProduct = await product.save();
+          res.status(201).json(createdProduct);
+        }
+      );
+      stream.end(req.file.buffer); // ⬅️ very important
+    } else {
+      return res.status(400).json({ error: "Image is required" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
+
 
 const getAllProducts = async (req, res) => {
   try {

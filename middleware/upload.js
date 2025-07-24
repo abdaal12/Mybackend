@@ -1,15 +1,5 @@
-const multer = require('multer');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const cloudinary = require("cloudinary").v2;
-
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'ecommerce_products', // You can name the folder
-    allowed_formats: ['jpg', 'jpeg', 'png'],
-  },
-});
-
+// middleware/upload.js
+import multer from "multer";
+const storage = multer.memoryStorage(); // store in memory for upload to Cloudinary
 const upload = multer({ storage });
-
-module.exports = upload;
+export default upload;
