@@ -16,8 +16,11 @@ const createProduct = async (req, res) => {
       countInStock,
     } = req.body;
 
-    // Ensure Cloudinary URL is set correctly
-    const image = req.file?.path || ""; // .path should be secure URL
+
+const imageUrl = req.file?.path;
+if (!imageUrl) {
+  return res.status(400).json({ message: "Image upload failed" });
+}
 
     const product = new Product({
       user: req.user._id,
