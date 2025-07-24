@@ -28,9 +28,9 @@ if (!imageUrl) {
       brand,
       category,
       description,
-      image, // Cloudinary URL
       price,
       countInStock,
+      image: req.file.path,
     });
 
     const createdProduct = await product.save();
