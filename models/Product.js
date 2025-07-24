@@ -36,6 +36,10 @@ const productSchema = mongoose.Schema(
       required: true,
       
     },
+    likes: {
+    type: Number,
+    default: 0,
+  },
       seller: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User", // or "Vendor", depending on your project

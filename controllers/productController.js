@@ -188,7 +188,21 @@ const searchProducts = (async (req, res) => {
   res.json(products);
 });
 
+const likeProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product)
+      return res.status(404).json({ message: "Product not found" });
 
+    product.likes += 1;
+    await product.save();
+
+    res.status(200).json({ message: "Product liked", likes: product.likes });
+  } catch (error) {
+    console.error("Error in likeProduct:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 module.exports = {
   createProduct,
@@ -198,4 +212,5 @@ module.exports = {
   updateProduct,
   deleteProduct,
   searchProducts,
+   likeProduct,
 };
