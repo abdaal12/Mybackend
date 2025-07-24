@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const chatController = require("../controllers/chatController");
+const { accessChat, getUserChats } = require("../controllers/chatController");
+const { protect } = require("../middleware/authMiddleware");
 
-router.post("/chat", chatController.createChat);
-router.post("/message", chatController.sendMessage);
-router.get("/messages/:chatId", chatController.getMessages);
+router.post("/", protect, accessChat); // create or get chat
+router.get("/", protect, getUserChats); // all chats of user
 
 module.exports = router;

@@ -1,39 +1,36 @@
 const Chat = require("../models/Chat");
-const Message = require("../models/Message");
 
-exports.createChat = async (req, res) => {
-  const { userId1, userId2 } = req.body;
+accessChat = async (req, res) => {
+  const { userId } = req.body;
+
   try {
-    const existingChat = await Chat.findOne({
-      members: { $all: [userId1, userId2] },
+    let chat = await Chat.findOne({
+      participants: { $all: [req.user._id, userId] },
     });
 
-    if (existingChat) return res.status(200).json(existingChat);
+    if (!chat) {
+      chat = await Chat.create({ participants: [req.user._id, userId] });
+    }
 
-    const newChat = new Chat({ members: [userId1, userId2] });
-    await newChat.save();
-    res.status(201).json(newChat);
-  } catch (err) {
-    res.status(500).json(err.message);
+    res.status(200).json(chat);
+  } catch (error) {
+    res.status(500).json({ message: "Chat error", error });
   }
 };
 
-exports.sendMessage = async (req, res) => {
-  const { chatId, senderId, text } = req.body;
+getUserChats = async (req, res) => {
   try {
-    const message = new Message({ chatId, senderId, text });
-    await message.save();
-    res.status(201).json(message);
+    const chats = await Chat.find({
+      participants: { $in: [req.user._id] },
+    }).populate("participants", "-password");
+
+    res.status(200).json(chats);
   } catch (err) {
-    res.status(500).json(err.message);
+    res.status(500).json(err);
   }
 };
 
-exports.getMessages = async (req, res) => {
-  try {
-    const messages = await Message.find({ chatId: req.params.chatId });
-    res.status(200).json(messages);
-  } catch (err) {
-    res.status(500).json(err.message);
-  }
-};
+module.exports={
+  accessChat,
+getUserChats,
+}

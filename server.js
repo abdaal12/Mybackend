@@ -42,7 +42,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 //Chat Routes
 
 const chatRoutes = require("./routes/chatRoutes");
-app.use("/api", chatRoutes);
+const messageRoutes = require("./routes/messageRoutes");
+
+// Add after other routes
+app.use("/api/chat", chatRoutes);
+app.use("/api/message", messageRoutes);
 
 app.get('/',(req,res) => {
     res.send("api is running............");

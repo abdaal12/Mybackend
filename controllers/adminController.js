@@ -2,7 +2,6 @@ const User = require('../models/User');
 
 const Product = require('../models/Product');
 
-
 // @desc    Get all users
 const getAllUsers = async (req, res) => {
   const users = await User.find({}).select('-password');
