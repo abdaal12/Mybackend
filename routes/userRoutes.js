@@ -16,6 +16,6 @@ router.get('/',getAllUsers);
 router.post('/login', loginUser); 
 router.get('/profile', protect, getUserProfile);
 router.put("/profile", protect, updateUserProfile);
-router.get('/liked', auth, getLikedProducts);
+router.get('/liked', protect, getLikedProducts);
 
 module.exports=router;
