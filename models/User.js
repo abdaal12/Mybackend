@@ -26,7 +26,8 @@ const userSchema = new mongoose.Schema(
 contact: { type: String },
 
 address: { type: String },
-
+ likedProducts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+ 
   },
   {
     timestamps: true,
