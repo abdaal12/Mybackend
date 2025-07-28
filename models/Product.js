@@ -2,11 +2,20 @@ const mongoose = require('mongoose');
 
 const productSchema = mongoose.Schema(
   {
+    // User who added the product (optional)
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: false,
-      ref: 'User', // 🔗 Reference to User model
+      ref: 'User',
     },
+
+    // Seller who owns the product (for chat/contact)
+    seller: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true, // Make sure seller is always provided
+    },
+
     name: {
       type: String,
       required: true,
@@ -34,22 +43,19 @@ const productSchema = mongoose.Schema(
     countInStock: {
       type: Number,
       required: true,
-      
     },
+
+    // Likes & user references
     likes: {
-    type: Number,
-    default: 0,
-  },
-  likedBy: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      type: Number,
+      default: 0,
     },
-  ],
-      seller: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // or "Vendor", depending on your project
-  },
+    likedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   {
     timestamps: true,

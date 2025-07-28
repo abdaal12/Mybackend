@@ -87,8 +87,8 @@ const getMyProducts = async (req, res) => {
 const getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate(
-      "user", // assuming `user` is the seller field
-      "name email phone"
+      "seller", 
+      "name email phone _id"
     );
 
     if (!product) {
