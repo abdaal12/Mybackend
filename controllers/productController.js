@@ -87,8 +87,8 @@ const getMyProducts = async (req, res) => {
 const getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate(
-      "user",
-      "name email"
+      "user", // assuming `user` is the seller field
+      "name email phone"
     );
 
     if (!product) {
@@ -100,6 +100,7 @@ const getProductById = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 /**
  * @desc    Update a product (only by owner)
