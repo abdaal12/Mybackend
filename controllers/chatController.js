@@ -1,36 +1,48 @@
 const Chat = require("../models/Chat");
 
-accessChat = async (req, res) => {
+// Access or create a one-to-one chat
+const accessChat = async (req, res) => {
   const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
 
   try {
     let chat = await Chat.findOne({
-      participants: { $all: [req.user._id, userId] },
+      participants: { $all: [req.user._id, userId], $size: 2 },
     });
 
     if (!chat) {
       chat = await Chat.create({ participants: [req.user._id, userId] });
     }
 
+    chat = await chat.populate("participants", "-password");
+
     res.status(200).json(chat);
   } catch (error) {
-    res.status(500).json({ message: "Chat error", error });
+    console.error("Access chat error:", error);
+    res.status(500).json({ message: "Chat access failed", error });
   }
 };
 
-getUserChats = async (req, res) => {
+// Get all chats of a user
+const getUserChats = async (req, res) => {
   try {
     const chats = await Chat.find({
-      participants: { $in: [req.user._id] },
-    }).populate("participants", "-password");
+      participants: req.user._id,
+    })
+      .populate("participants", "-password")
+      .sort({ updatedAt: -1 });
 
     res.status(200).json(chats);
   } catch (err) {
-    res.status(500).json(err);
+    console.error("Get chats error:", err);
+    res.status(500).json({ message: "Fetching chats failed", err });
   }
 };
 
-module.exports={
+module.exports = {
   accessChat,
-getUserChats,
-}
+  getUserChats,
+};

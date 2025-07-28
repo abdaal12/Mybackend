@@ -1,34 +1,50 @@
 const Message = require("../models/Message");
 
-sendMessage = async (req, res) => {
+// Send a message in a one-to-one chat
+const sendMessage = async (req, res) => {
   const { chatId, text } = req.body;
 
+  if (!chatId || !text) {
+    return res.status(400).json({ message: "chatId and text are required" });
+  }
+
   try {
-    const message = await Message.create({
+    const newMessage = await Message.create({
       chatId,
       sender: req.user._id,
       text,
     });
 
-    res.status(200).json(message);
+    const populatedMessage = await newMessage.populate("sender", "name email");
+
+    res.status(200).json(populatedMessage);
   } catch (error) {
-    res.status(500).json({ message: "Message send error", error });
+    console.error("Send message error:", error);
+    res.status(500).json({ message: "Message send failed", error });
   }
 };
 
-getMessages = async (req, res) => {
+// Get all messages of a chat
+const getMessages = async (req, res) => {
+  const { chatId } = req.params;
+
+  if (!chatId) {
+    return res.status(400).json({ message: "Chat ID is required" });
+  }
+
   try {
-    const messages = await Message.find({ chatId: req.params.chatId })
+    const messages = await Message.find({ chatId })
       .populate("sender", "name email")
       .sort({ createdAt: 1 });
 
     res.status(200).json(messages);
   } catch (error) {
-    res.status(500).json(error);
+    console.error("Get messages error:", error);
+    res.status(500).json({ message: "Failed to fetch messages", error });
   }
 };
 
-module.exports={
-    sendMessage,
-    getMessages,
-}
+module.exports = {
+  sendMessage,
+  getMessages,
+};
